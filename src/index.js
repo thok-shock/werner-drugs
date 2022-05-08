@@ -10,7 +10,7 @@ export default function App() {
     <div>
         <Navbar bg='dark' variant='dark'>
             <Container fluid>
-                <Navbar.Brand>Werner Drugs</Navbar.Brand>
+                <Navbar.Brand href="/">Werner Drugs</Navbar.Brand>
             </Container>
         </Navbar>
       <Container className='m-1' fluid>

@@ -1,23 +1,50 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import reactDom from "react-dom/client";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { BrowserRouter } from "react-router-dom";
-import { Col, Container, Navbar, Row } from "react-bootstrap";
+import { Col, Container, Dropdown, DropdownButton, Navbar, NavDropdown, Row } from "react-bootstrap";
 import Routing from "./components/Routing";
 
 export default function App() {
+
+  const [user, setUser] = useState(null)
+
+  useEffect(() => {
+    fetch("/api/users", {
+      method: "GET",
+      headers: { "Content-Type": "application/json" },
+    })
+    .then(res => {
+      if (res.ok) {
+        return res.json()
+      } else {
+        //do nothing
+      }
+    })
+    .then(res => {
+      setUser(res)
+    })
+    .catch(err => {
+      console.log('An unexpected error occurred')
+    })
+  }, []);
+
   return (
     <div>
         <Navbar bg='dark' variant='dark'>
-            <Container fluid>
+            <Container fluid className='mx-5'>
                 <Navbar.Brand href="/">Werner Drugs</Navbar.Brand>
+                <NavDropdown drop='start' title='More' menuVariant="dark">
+                  <NavDropdown.Item href='/'>Home</NavDropdown.Item>
+                  {user ? <NavDropdown.Item href='/logout'>Logout</NavDropdown.Item> : <NavDropdown.Item href='/login/google'>Login</NavDropdown.Item>}
+                </NavDropdown>
             </Container>
         </Navbar>
-      <Container className='m-1' fluid>
+      <Container className='my-1' fluid>
         <Row>
           <Col lg="2"></Col>
           <Col lg="8">
-            <Routing />
+            <Routing user={user} />
             
           </Col>
           <Col lg="2"></Col>
@@ -30,11 +57,11 @@ export default function App() {
 const root = reactDom.createRoot(document.getElementById("root"));
 
 root.render(
-  <React.StrictMode>
+  //<React.StrictMode>
     <BrowserRouter>
       <App />
     </BrowserRouter>
-  </React.StrictMode>
+  //</React.StrictMode>
 );
 
 if (module.hot) {

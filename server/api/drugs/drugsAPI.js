@@ -1,7 +1,8 @@
 const express = require('express')
-const getDrugInformation = require('./drugsFunctions')
+const {getDrugInformation, updateDrug} = require('./drugsFunctions')
 
 const drugsRouter = express.Router()
+
 
 drugsRouter.get('/:name', (req, res, next) => {
     if (!req.params.name) {
@@ -19,6 +20,24 @@ drugsRouter.get('/:name', (req, res, next) => {
         .catch(err => {
             next(err)
         })
+    }
+})
+
+drugsRouter.put('/:name', (req, res, next) => {
+    if (req.session.passport && req.session.passport.user && req.session.passport.user.permission > 0) {
+        if (!req.params.name || !req.body) {
+            res.sendStatus(400)
+        } else {
+            updateDrug(req.body)
+            .then(rows => {
+                res.json(rows)
+            })
+            .catch(err => {
+                next(err)
+            })
+        }
+    } else {
+        res.sendStatus(403)
     }
 })
 

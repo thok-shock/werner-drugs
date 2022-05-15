@@ -26,7 +26,7 @@ module.exports = {
         ]
     },
     devtool: 'inline-source-map',
-    plugins: [htmlPlugin, new webpack.HotModuleReplacementPlugin()],
+    plugins: [new webpack.HotModuleReplacementPlugin()],
     output: {
         filename: "[name].bundle.js",
         path: path.resolve(__dirname, 'dist'),

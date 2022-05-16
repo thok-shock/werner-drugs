@@ -21,4 +21,13 @@ function updateDrug(fields) {
     })
 }
 
-module.exports = {getDrugInformation, updateDrug}
+function addSideEffect(drug_id, side_effect_id) {
+    return new Promise((resolve, reject) => {
+        pool.query('INSERT INTO drugs_joins_side_effects (drug_id, side_effect_id) VALUES (?,?);', [drug_id, side_effect_id], (err, rows) => {
+            if (err) reject(err)
+            resolve(rows)
+        })
+    })
+}
+
+module.exports = {getDrugInformation, updateDrug, addSideEffect}

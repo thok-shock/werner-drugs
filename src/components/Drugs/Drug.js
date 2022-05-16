@@ -110,6 +110,10 @@ export default function Drug(props) {
     
   }
 
+  function addSideEffect(id) {
+    fetch('/api/drugs')
+  }
+
   function createMarkup(html) {
     return {__html: html}
   }

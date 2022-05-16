@@ -1,5 +1,5 @@
 const express = require('express')
-const {getDrugInformation, updateDrug} = require('./drugsFunctions')
+const {getDrugInformation, updateDrug, addSideEffect} = require('./drugsFunctions')
 
 const drugsRouter = express.Router()
 
@@ -38,6 +38,20 @@ drugsRouter.put('/:name', (req, res, next) => {
         }
     } else {
         res.sendStatus(403)
+    }
+})
+
+drugsRouter.post('/add-side-effect', (req, res, next) => {
+    if (!req.body) {
+        res.sendStatus(400)
+    } else {
+        addSideEffect(req.body.drug_id, req.body.side_effect_id)
+        .then(rows => {
+            res.json(rows)
+        })
+        .catch(err => {
+            next(err)
+        })
     }
 })
 

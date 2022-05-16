@@ -73,6 +73,10 @@ export default function Drug(props) {
     
   }
 
+  function createMarkup(html) {
+    return {__html: html}
+  }
+
   return (
     <Container className="mt-1">
       <Row>
@@ -97,7 +101,7 @@ export default function Drug(props) {
                     Drug Class: <a href="/">ACE-Inhibitor</a>
                   </p>
                   <h3>Counseling Pearls <EditButton user={props.user} setEditMode={setEditMode} />  </h3>
-                  {!editMode && <p>{drugInfo.pearls}</p>}
+                  {!editMode && <p dangerouslySetInnerHTML={createMarkup(drugInfo.pearls)}></p>}
                   {editMode && <div className='my-3'><CKEditor editor={ClassicEditor} data={pearls} onChange={(e, editor) => {setPearls(editor.getData())}} id='pearls' /></div>
                       }
                   <h3>Side Effects <EditButton user={props.user} setEditMode={setEditMode} />  </h3>

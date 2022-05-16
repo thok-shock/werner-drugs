@@ -19,6 +19,9 @@ export default function NewSideEffect(props) {
             }
         })
         .then(res => {
+            setName('')
+            setDescription('')
+            props.setAsOf(new Date())
             props.onHide(false)
         })
         .catch(err => {

@@ -8,6 +8,16 @@ import EditButton from "./Components/EditButton";
 import NewSideEffect from "./Components/NewSideEffect";
 
 
+function renderAllSideEffects(allSideEffects) {
+  if (allSideEffects && allSideEffects.length > 0) {
+    return allSideEffects.map(sx => {
+      return <Form.Group><Form.Check label={sx.name}></Form.Check></Form.Group>
+    })
+  } else {
+    return <div>No side effects available</div>
+  }
+}
+
 export default function Drug(props) {
   const [drugInfo, setDrugInfo] = useState(null);
   const [doesNotExist, setDoesNotExist] = useState(false);
@@ -16,6 +26,9 @@ export default function Drug(props) {
   const [pearls, setPearls] = useState(null)
   const [description, setDescription] = useState(null)
   const [newSideEffectOpen, setNewSideEffectOpen] = useState(null)
+  const [sideEffects, setSideEffects] = useState(null)
+  const [allSideEffects, setAllSideEffects] = useState(null)
+  const [asOf, setAsOf] = useState(new Date())
 
   useEffect(() => {
       if (drugInfo) {
@@ -43,9 +56,31 @@ export default function Drug(props) {
         setDrugInfo(res);
       })
       .catch((err) => {
-        alert(err);
+        console.log(err);
       });
-  }, [location]);
+  }, [location, asOf]);
+
+  useEffect(() => {
+    if (editMode) {
+      fetch('/api/side-effects', {
+        method: 'GET',
+        headers: {'Content-Type': 'application/json'}
+      })
+      .then(res => {
+        if (res.ok) {
+          return res.json()
+        } else {
+          console.log('an unexpected error occurred')
+        }
+      })
+      .then(res => {
+        setAllSideEffects(res)
+      })
+      .catch(err => {
+        console.log(err)
+      })
+    }
+  }, [editMode, asOf])
 
   function updateDrug() {
     fetch(`/api/drugs/${location.pathname.replaceAll("/", "")}`, {
@@ -108,6 +143,7 @@ export default function Drug(props) {
                       }
                   <h3>Side Effects <EditButton user={props.user} setEditMode={setEditMode} />  </h3>
                   {editMode && <div>
+                    <div className='d-flex flex-column flex-wrap' style={{maxHeight: '10rem'}}>{renderAllSideEffects(allSideEffects)}</div>
                     <Button size='sm' className='my-3' onClick={() => {setNewSideEffectOpen(true)}}>New Side Effect</Button>
                     </div>}
                   <h3>Description <EditButton user={props.user} setEditMode={setEditMode} />  </h3>
@@ -133,7 +169,7 @@ export default function Drug(props) {
           )}
         </Col>
       </Row>
-      <NewSideEffect show={newSideEffectOpen} onHide={setNewSideEffectOpen}></NewSideEffect>
+      <NewSideEffect show={newSideEffectOpen} onHide={setNewSideEffectOpen} setAsOf={setAsOf}></NewSideEffect>
     </Container>
   );
 }

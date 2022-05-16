@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import reactDom from "react-dom/client";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { BrowserRouter } from "react-router-dom";
-import { Col, Container, Dropdown, DropdownButton, Navbar, NavDropdown, Row } from "react-bootstrap";
+import { Col, Container, Dropdown, DropdownButton, Navbar, NavDropdown, Row, ToastContainer } from "react-bootstrap";
 import Routing from "./components/Routing";
 
 export default function App() {
@@ -40,6 +40,7 @@ export default function App() {
                 </NavDropdown>
             </Container>
         </Navbar>
+
       <Container className='my-1' fluid>
         <Row>
           <Col lg="2"></Col>
@@ -50,6 +51,7 @@ export default function App() {
           <Col lg="2"></Col>
         </Row>
       </Container>
+
     </div>
   );
 }

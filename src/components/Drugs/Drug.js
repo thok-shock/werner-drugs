@@ -5,6 +5,7 @@ import { useLocation } from "react-router-dom";
 import {CKEditor} from '@ckeditor/ckeditor5-react'
 import ClassicEditor from '@ckeditor/ckeditor5-build-classic'
 import EditButton from "./Components/EditButton";
+import NewSideEffect from "./Components/NewSideEffect";
 
 
 export default function Drug(props) {
@@ -14,6 +15,7 @@ export default function Drug(props) {
   const [name, setName] = useState(null)
   const [pearls, setPearls] = useState(null)
   const [description, setDescription] = useState(null)
+  const [newSideEffectOpen, setNewSideEffectOpen] = useState(null)
 
   useEffect(() => {
       if (drugInfo) {
@@ -105,9 +107,9 @@ export default function Drug(props) {
                   {editMode && <div className='my-3'><CKEditor editor={ClassicEditor} data={pearls} onChange={(e, editor) => {setPearls(editor.getData())}} id='pearls' /></div>
                       }
                   <h3>Side Effects <EditButton user={props.user} setEditMode={setEditMode} />  </h3>
-                  <ul>
-                    <li>Hypotension</li>
-                  </ul>
+                  {editMode && <div>
+                    <Button size='sm' className='my-3' onClick={() => {setNewSideEffectOpen(true)}}>New Side Effect</Button>
+                    </div>}
                   <h3>Description <EditButton user={props.user} setEditMode={setEditMode} />  </h3>
                   {!editMode && <p>{drugInfo.description}</p>}
                   {editMode && <div className='my-3'><CKEditor editor={ClassicEditor} data={description} onChange={(e, editor) => {setDescription(editor.getData())}} id='description' /></div>}
@@ -131,6 +133,7 @@ export default function Drug(props) {
           )}
         </Col>
       </Row>
+      <NewSideEffect show={newSideEffectOpen} onHide={setNewSideEffectOpen}></NewSideEffect>
     </Container>
   );
 }

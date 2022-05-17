@@ -8,6 +8,7 @@ import EditButton from "./Components/EditButton";
 import NewSideEffect from "./Components/NewSideEffect";
 import { toast } from "react-toastify";
 import SideEffect from "./Components/SideEffect";
+import BlackBoxWarnings from "./Components/BlackBoxWarnings";
 
 
 function renderAllSideEffects(allSideEffects, drug_id, sideEffects, setAsOf) {
@@ -30,6 +31,8 @@ export default function Drug(props) {
   const [newSideEffectOpen, setNewSideEffectOpen] = useState(null)
   const [sideEffects, setSideEffects] = useState(null)
   const [allSideEffects, setAllSideEffects] = useState(null)
+  const [showBBS, setShowBBS] = useState(false)
+  const [BBSofDrug, setBBSofDrug] = useState(null)
   const [asOf, setAsOf] = useState(new Date())
 
   useEffect(() => {
@@ -104,6 +107,25 @@ export default function Drug(props) {
       
   }, [drugInfo, asOf])
 
+  useEffect(() => {
+      if (drugInfo) {
+          fetch(`/api/drugs/get-black-box-warnings-of-drug/${drugInfo.name}`)
+          .then(res => {
+              if (res.ok) {
+                  return res.json()
+              } else {
+                  throw new Error()
+              }
+          })
+          .then(res => {
+              setBBSofDrug(res)
+          })
+          .catch(() => {
+              toast.error('An unexpected error occurred')
+          })
+      }
+  }, [drugInfo, asOf, showBBS])
+
   function updateDrug() {
     fetch(`/api/drugs/${location.pathname.replaceAll("/", "")}`, {
         method: 'PUT',
@@ -177,6 +199,16 @@ export default function Drug(props) {
                   {/* <p>
                     Drug Class: <a href="/">ACE-Inhibitor</a>
                   </p> */}
+                  {BBSofDrug && BBSofDrug.length > 0 && BBSofDrug.map(bbw => {
+                      return <Card key={bbw.id} style={{backgroundColor: 'black', color: 'white'}} className='my-3'>
+                          <Card.Body>
+                          <Card.Title>Black Box Warning</Card.Title>
+                          <Card.Subtitle>{bbw.name}</Card.Subtitle>
+                          <Card.Text className='mt-3'><small>{bbw.warning}</small></Card.Text>
+                          </Card.Body>
+                      </Card>
+                  })}
+                  {editMode && <Button onClick={() => setShowBBS(true)} variant='dark'>Black Box Warnings</Button>}
                   <h3>Counseling Pearls <EditButton user={props.user} setEditMode={setEditMode} editMode={editMode} />  </h3>
                   {!editMode && <p dangerouslySetInnerHTML={createMarkup(drugInfo.pearls)}></p>}
                   {editMode && <div className='my-3'><CKEditor editor={ClassicEditor} data={pearls} onChange={(e, editor) => {setPearls(editor.getData())}} id='pearls' /></div>
@@ -197,7 +229,9 @@ export default function Drug(props) {
               {editMode && <Card.Footer>
                   <Button onClick={() => {updateDrug()}}>Save Changes</Button>
                   </Card.Footer>}
+                  <BlackBoxWarnings show={showBBS} onHide={setShowBBS} drug_id={drugInfo.id} blackBoxWarningsOfDrug={BBSofDrug}></BlackBoxWarnings>
             </Card>
+            
           )}
           {doesNotExist && (
             <Card>

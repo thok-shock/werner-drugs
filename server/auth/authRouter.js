@@ -13,7 +13,7 @@ authRouter.get(
   passport.authenticate("google", { failureRedirect: "/login/google" }),
   function (req, res) {
     // Successful authentication, redirect home.
-    res.redirect("/");
+    res.redirect(req.session.lastDrug ? req.session.lastDrug : '/');
   }
 );
 

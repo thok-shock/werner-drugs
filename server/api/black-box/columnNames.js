@@ -1,5 +1,5 @@
 module.exports = {
-    id: id,
-    name: name,
-    warning: warning
+    id: "id",
+    name: "name",
+    warning: "warning"
 }

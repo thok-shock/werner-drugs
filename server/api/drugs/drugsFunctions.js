@@ -48,12 +48,39 @@ function removeSideEffect(drug_id, side_effect_id) {
     })
 }
 
+function addBBWarning(drug_id, black_box_id) {
+    return new Promise((resolve, reject) => {
+        pool.query('INSERT INTO drugs_joins_black_box_warnings (drug_id, black_box_warning_id) VALUES (?,?);', [drug_id, black_box_id], (err, rows) => {
+            if (err) reject(err)
+            resolve(rows)
+        })
+    })
+}
+
+function removeBBWarning(drug_id, black_box_id) {
+    return new Promise((resolve, reject) => {
+        pool.query('DELETE FROM drugs_joins_black_box_warnings WHERE drug_id = ? AND black_box_warning_id = ?', [drug_id, black_box_id], (err, rows) => {
+            if (err) reject(err)
+            resolve(rows)
+        })
+    })
+}
+
 function getSideEffectsOfDrug(drug_name) {
     return new Promise((resolve, reject) => {
         pool.query("SELECT se.* FROM side_effects AS se JOIN drugs_joins_side_effects AS bridge ON se.id = bridge.side_effect_id JOIN drugs ON bridge.drug_id = drugs.id WHERE drugs.name = ?", [drug_name], (err, rows) => {
             if (err) reject(err)
             resolve(rows)
         })
+    })
+}
+
+function getBlackBoxWarningsOfDrug(drug_name) {
+    return new Promise((resolve, reject) => {
+        pool.query("SELECT bb.* FROM black_box_warnings AS bb JOIN drugs_joins_black_box_warnings AS bridge ON bb.id = bridge.black_box_warning_id JOIN drugs ON bridge.drug_id = drugs.id WHERE drugs.name = ?;", [drug_name], (err, rows) => {
+            if (err) reject(err)
+            resolve(rows)
+        } )
     })
 }
 
@@ -66,4 +93,4 @@ function createDrug(name) {
     })
 }
 
-module.exports = {getDrugInformation, updateDrug, addSideEffect, getSideEffectsOfDrug, removeSideEffect, createDrug, getAllDrugs}
+module.exports = {getDrugInformation, updateDrug, addSideEffect, getSideEffectsOfDrug, removeSideEffect, createDrug, getAllDrugs, addBBWarning, removeBBWarning, getBlackBoxWarningsOfDrug}

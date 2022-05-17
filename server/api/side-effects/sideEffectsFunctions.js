@@ -1,4 +1,4 @@
-const pool = require("../../database/pool")
+const {pool} = require("../../database/pool")
 
 function getSideEffectByName(name) {
     return new Promise((resolve, reject) => {

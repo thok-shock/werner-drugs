@@ -6,12 +6,14 @@ import {CKEditor} from '@ckeditor/ckeditor5-react'
 import ClassicEditor from '@ckeditor/ckeditor5-build-classic'
 import EditButton from "./Components/EditButton";
 import NewSideEffect from "./Components/NewSideEffect";
+import { toast } from "react-toastify";
+import SideEffect from "./Components/SideEffect";
 
 
-function renderAllSideEffects(allSideEffects) {
+function renderAllSideEffects(allSideEffects, drug_id, sideEffects, setAsOf) {
   if (allSideEffects && allSideEffects.length > 0) {
     return allSideEffects.map(sx => {
-      return <Form.Group><Form.Check label={sx.name}></Form.Check></Form.Group>
+      return <SideEffect key={sx.id} name={sx.name} id={sx.id} drug_id={drug_id} side_effects={sideEffects} setAsOf={setAsOf} />
     })
   } else {
     return <div>No side effects available</div>
@@ -56,7 +58,7 @@ export default function Drug(props) {
         setDrugInfo(res);
       })
       .catch((err) => {
-        console.log(err);
+        toast.error('An unexpected error occurred')
       });
   }, [location, asOf]);
 
@@ -70,17 +72,37 @@ export default function Drug(props) {
         if (res.ok) {
           return res.json()
         } else {
-          console.log('an unexpected error occurred')
+          toast.error('An unexpected error occurred')
         }
       })
       .then(res => {
         setAllSideEffects(res)
       })
       .catch(err => {
-        console.log(err)
+        toast.error('An unexpected error occurred')
       })
     }
   }, [editMode, asOf])
+
+  useEffect(() => {
+      if (drugInfo) {
+        fetch(`/api/drugs/get-side-effects-of-drug/${drugInfo.name}`)
+        .then(res => {
+            if (res.ok) {
+                return res.json()
+            } else {
+                toast.error('An unexpected error occurred')
+            }
+        })
+        .then(res => {
+            setSideEffects(res)
+        })
+        .catch(() => {
+            toast.error('An unexpected error occurred')
+        })
+      }
+      
+  }, [drugInfo, asOf])
 
   function updateDrug() {
     fetch(`/api/drugs/${location.pathname.replaceAll("/", "")}`, {
@@ -97,31 +119,45 @@ export default function Drug(props) {
             if (res.ok) {
                 return res.json()
             } else {
-                alert('An unexpected error occurred')
+                toast.error('An unexpected error occurred')
             }
         })
         .then(res => {
-            console.log(res)
+            setAsOf(new Date())
+            toast.success('Updated drug information')
             setEditMode(false)
         })
         .catch(err => {
-            console.log(err)
+            toast.error('An unexpected error occurred')
         })
     
-  }
-
-  function addSideEffect(id) {
-    fetch('/api/drugs')
   }
 
   function createMarkup(html) {
     return {__html: html}
   }
 
+  function createDrug() {
+      fetch(`/api/drugs/${location.pathname.replaceAll("/", "")}`, {
+          method: 'POST',
+          headers: {'Content-Type': 'application/json'}
+      })
+      .then(res => {
+          if (res.ok) {
+              setAsOf(new Date())
+              setDoesNotExist(false)
+              toast.success('Created new Drug')
+          } else {
+              throw new Error()
+          }
+      })
+      .catch(err => {
+          toast.error('An unexpected error occurred')
+      })
+  }
+
   return (
-    <Container className="mt-1">
-      <Row>
-        <Col>
+<div>
           {drugInfo && (
             <Card className="shadow-sm">
               <Card.Body>
@@ -130,28 +166,31 @@ export default function Drug(props) {
                         <Form.Control type='name' value={name} onChange={e => setName(e.target.value)}></Form.Control>
                         <Form.Text>The name of the drug. Typically this will be the generic name of the drug. Brand names will go in the a.k.a section.</Form.Text>
                     </Form.Group>}
-                {!editMode && <Card.Title as='h1'>
+                {!editMode && <Card.Title as='h1' style={{textTransform: 'capitalize'}}>
                 {drugInfo.name}{" "}
-                    <EditButton user={props.user} setEditMode={setEditMode} />    
+                    <EditButton user={props.user} setEditMode={setEditMode} editMode={editMode} />    
                 </Card.Title>}
-                <Card.Subtitle className="text-muted">
+                {/* <Card.Subtitle className="text-muted">
                   <small>also known as Zestril, Prinvil</small>
-                </Card.Subtitle>
+                </Card.Subtitle> */}
                 <div className="mt-3">
-                  <p>
+                  {/* <p>
                     Drug Class: <a href="/">ACE-Inhibitor</a>
-                  </p>
-                  <h3>Counseling Pearls <EditButton user={props.user} setEditMode={setEditMode} />  </h3>
+                  </p> */}
+                  <h3>Counseling Pearls <EditButton user={props.user} setEditMode={setEditMode} editMode={editMode} />  </h3>
                   {!editMode && <p dangerouslySetInnerHTML={createMarkup(drugInfo.pearls)}></p>}
                   {editMode && <div className='my-3'><CKEditor editor={ClassicEditor} data={pearls} onChange={(e, editor) => {setPearls(editor.getData())}} id='pearls' /></div>
                       }
-                  <h3>Side Effects <EditButton user={props.user} setEditMode={setEditMode} />  </h3>
+                  <h3>Side Effects <EditButton user={props.user} setEditMode={setEditMode} editMode={editMode} />  </h3>
+                  {!editMode && sideEffects && <ul> {sideEffects.map(sx => {
+                    return <li>{sx.name}</li>
+                  })}</ul>}
                   {editMode && <div>
-                    <div className='d-flex flex-column flex-wrap' style={{maxHeight: '10rem'}}>{renderAllSideEffects(allSideEffects)}</div>
+                    <div className='d-flex flex-column flex-wrap' style={{maxHeight: '10rem'}}>{renderAllSideEffects(allSideEffects, drugInfo.id, sideEffects, setAsOf)}</div>
                     <Button size='sm' className='my-3' onClick={() => {setNewSideEffectOpen(true)}}>New Side Effect</Button>
                     </div>}
-                  <h3>Description <EditButton user={props.user} setEditMode={setEditMode} />  </h3>
-                  {!editMode && <p>{drugInfo.description}</p>}
+                  <h3>Description <EditButton user={props.user} setEditMode={setEditMode} editMode={editMode} />  </h3>
+                  {!editMode && <p dangerouslySetInnerHTML={createMarkup(drugInfo.description)}></p>}
                   {editMode && <div className='my-3'><CKEditor editor={ClassicEditor} data={description} onChange={(e, editor) => {setDescription(editor.getData())}} id='description' /></div>}
                 </div>
               </Card.Body>
@@ -168,12 +207,11 @@ export default function Drug(props) {
                   Uh oh! It appears that we do not have an entry for this drug.
                   If you believe that this is incorrect, please contact us.
                 </Card.Text>
+                {props.user ? <Button onClick={() => {createDrug()}}>Add To Database</Button> : <></>}
               </Card.Body>
             </Card>
           )}
-        </Col>
-      </Row>
       <NewSideEffect show={newSideEffectOpen} onHide={setNewSideEffectOpen} setAsOf={setAsOf}></NewSideEffect>
-    </Container>
+    </div>
   );
 }

@@ -14,8 +14,18 @@ export default function Home(props) {
               <p>
                 This website was created after identifying the need for a
                 concise pharmacy tool that can be used to provide very brief
-                clinical and counseling pearls. Materials on this site do not
-                consitute medical advice.
+                clinical and counseling pearls. Other drug information databases
+                contain large quantities of data, but are difficult to use when
+                looking to briefly cover important counseling information for a
+                drug. This site is not intended to be used for inpatient or
+                acute treatment where more detailed information may be needed.
+              </p>
+              <p>
+                Some clinical information has been omitted for brevity, but can
+                be found on drug package inserts or other sites containing
+                medication information. Materials on this site do not consitute
+                medical advice, and providers should use always their clinical
+                judgement to assess patient situations.
               </p>
             </div>
             <div>
@@ -24,7 +34,7 @@ export default function Home(props) {
                 My name is Ryan S Werner. I am a DPH-4 student with the
                 University of Wisconsin - Madison School of Pharmacy, and am on
                 rotations with health systems in Milwaukee, WI. I also have a
-                strong background in web development which I believe can help
+                strong background in web development, which I believe can help
                 improve the education of both medical professionals and
                 patients.
               </p>

@@ -17,7 +17,6 @@ app.use(require('express-session')({ secret: 'keyboard cat', resave: false, save
 app.use(passport.initialize());
 app.use(passport.session());
 
-
 if (process.env.NODE_ENV === "development") {
   console.log("Compiling for development environment");
 
@@ -27,11 +26,18 @@ if (process.env.NODE_ENV === "development") {
   app.use(require("webpack-hot-middleware")(compiler));
 }
 
+app.use('/login', (req, res, next) => {
+  console.log(req.originalUrl)
+  next()
+})
 app.use('/login', authRouter)
 app.get('/logout', (req, res) => {
     //console.log(req.session)
     req.logout()
-    res.redirect('/')
+    req.session.destroy(() => {
+      res.redirect('/')
+    })
+    
 })
 
 app.use('/api', apiRouter)

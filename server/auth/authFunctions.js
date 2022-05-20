@@ -1,4 +1,4 @@
-const pool = require("../database/pool")
+const {pool} = require("../database/pool")
 
 function findOrCreate(googleID, name, email) {
     return new Promise((resolve, reject) => {

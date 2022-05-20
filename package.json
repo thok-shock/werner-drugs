@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "npx nodemon --watch server server/index"
+    "start": "npx nodemon --watch server server/index",
+    "build": "npx webpack-cli"
   },
   "author": "",
   "license": "ISC",

@@ -32,7 +32,7 @@ if (process.env.NODE_ENV === 'development') {
         plugins: [new webpack.HotModuleReplacementPlugin()],
         output: {
             filename: "[name].bundle.js",
-            path: path.resolve(__dirname, 'dist'),
+            path: path.resolve(__dirname, 'dist/build'),
             clean: true,
             publicPath: '/'
         }
@@ -60,10 +60,10 @@ if (process.env.NODE_ENV === 'development') {
         plugins: [htmlPlugin],
         output: {
             filename: "[name].bundle.js",
-            path: path.resolve(__dirname, 'dist'),
+            path: path.resolve(__dirname, 'dist/build'),
             clean: true,
-            publicPath: '/'
-        }
+            publicPath: '/',
+        },
     };
 }
 

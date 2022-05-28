@@ -46,4 +46,4 @@ app.use('/api', apiRouter)
 app.get("/*", (req, res) => {
   res.sendFile(path.resolve(__dirname, "../src/index.html"));
 });
-app.listen(3000);
+app.listen(process.env.SERVER_PORT);

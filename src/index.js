@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import reactDom from "react-dom/client";
+import { hydrate, render } from "react-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "react-toastify/dist/ReactToastify.css";
 import { BrowserRouter } from "react-router-dom";
@@ -19,6 +19,7 @@ import {
 import Routing from "./components/Routing";
 import { toast, ToastContainer } from "react-toastify";
 import Fuse from "fuse.js";
+
 
 export default function App() {
   const [user, setUser] = useState(null);
@@ -166,16 +167,20 @@ export default function App() {
   );
 }
 
-const root = reactDom.createRoot(document.getElementById("root"));
 
-root.render(
-  //<React.StrictMode>
-  <BrowserRouter>
+ 
+const rootElement = document.getElementById("root");
+if (rootElement.hasChildNodes()) {
+  hydrate(<BrowserRouter>
     <App />
     <ToastContainer />
-  </BrowserRouter>
-  //</React.StrictMode>
-);
+  </BrowserRouter>, rootElement);
+} else {
+  render(<BrowserRouter>
+    <App />
+    <ToastContainer />
+  </BrowserRouter>, rootElement);
+}
 
 if (module.hot) {
   module.hot.accept();

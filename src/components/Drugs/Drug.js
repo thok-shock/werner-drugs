@@ -1,8 +1,9 @@
-import React, { useEffect, useState } from "react";
+import React, {useEffect, useState } from "react";
 import { Col, Row, Container, Card, Form, Button } from "react-bootstrap";
 import { PencilSquare } from "react-bootstrap-icons";
 import { useLocation } from "react-router-dom";
-import {CKEditor} from '@ckeditor/ckeditor5-react'
+//import {CKEditor} from '@ckeditor/ckeditor5-react'
+import {CKEditor} from '@ckeditor/ckeditor5-react';
 import ClassicEditor from '@ckeditor/ckeditor5-build-classic'
 import EditButton from "./Components/EditButton";
 import NewSideEffect from "./Components/NewSideEffect";
